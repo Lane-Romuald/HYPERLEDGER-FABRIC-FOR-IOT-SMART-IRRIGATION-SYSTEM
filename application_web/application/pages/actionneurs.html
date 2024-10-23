@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>SAI|Actionneurs</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+
+   <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" href="../css/tailwind.css" />
+    <script src="https://cdn.jsdelivr.net/gh/alpine-collective/alpine-magic-helpers@0.5.x/dist/component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.7.3/dist/alpine.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+  </head>
+  <body>
+    <div x-data="setup()" x-init="$refs.loading.classList.add('hidden'); setColors(color);" :class="{ 'dark': isDark}">
+      <div class="flex h-screen antialiased text-gray-900 bg-gray-100 dark:bg-dark dark:text-light">
+        <!-- Loading screen -->
+        <div
+          x-ref="loading"
+          class="fixed inset-0 z-50 flex items-center justify-center text-2xl font-semibold text-white bg-primary-darker"
+        >
+          Chargement.....
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="flex-shrink-0 hidden w-64 bg-white border-r dark:border-primary-darker dark:bg-darker md:block">
+          <div class="flex flex-col h-full">
+            <!-- Sidebar links -->
+            <nav aria-label="Main" class="flex-1 px-2 py-4 space-y-2 overflow-y-hidden hover:overflow-y-auto">
+              <!-- Dashboards links -->
+              <div x-data="{ isActive: false, open: false}">
+                <!-- active & hover classes 'bg-primary-100 dark:bg-primary' -->
+                <a
+                  href="https://192.168.43.232:3000/sai/surveillance"
+                  @click=" open = !open"
+                  class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
+                  :class="{'bg-primary-100 dark:bg-primary': isActive || open}"
+                  role="button"
+                  aria-haspopup="true"
+                  :aria-expanded="(open || isActive) ? 'true' : 'false'"
+                >
+                  <span aria-hidden="true">
+                    <svg
+                      class="w-5 h-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      />
+                    </svg>
+                  </span>
+                  <span class="ml-2 text-sm"> Vue Canal </span>
+                  
+                </a>
+               
+              </div>
+
+              <!-- Components links -->
+              <div x-data="{ isActive: false, open: false }">
+                <!-- active classes 'bg-primary-100 dark:bg-primary' -->
+                <a
+                  href="https://192.168.43.232:3000/sai/capteur"
+                  @click="open = !open"
+                  class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
+                  :class="{ 'bg-primary-100 dark:bg-primary': isActive || open }"
+                  role="button"
+                  aria-haspopup="true"
+                  :aria-expanded="(open || isActive) ? 'true' : 'false'"
+                >
+                  <span aria-hidden="true">
+                    <svg
+                      class="w-5 h-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                      />
+                    </svg>
+                  </span>
+                  <span class="ml-2 text-sm"> Capteurs </span>
+                  
+                </a>
+               
+              </div>
+              <div x-data="{ isActive: true, open: true}">
+                <!-- active & hover classes 'bg-primary-100 dark:bg-primary' -->
+                <a
+                  href="https://192.168.43.232:3000/sai/actionneur"
+                  @click="open = !open"
+                  class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
+                  :class="{'bg-primary-100 dark:bg-primary': isActive || open}"
+                  role="button"
+                  aria-haspopup="true"
+                  :aria-expanded="(open || isActive) ? 'true' : 'false'"
+                >
+                  <span aria-hidden="true">
+                    <svg
+                      class="w-5 h-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+                      />
+                    </svg>
+                  </span>
+                  <span class="ml-2 text-sm"> Actionneurs </span>
+                  
+                </a>
+                <div x-show="open" class="mt-2 space-y-2 px-7" role="menu" aria-label="Layouts">
+                </div>
+              </div>
+              <!-- Pages links -->
+           
+
+              <!-- Authentication links -->
+              <div x-data="{ isActive: false, open: false}">
+                <!-- active & hover classes 'bg-primary-100 dark:onclick="location.href='culture.html';"bg-primary' -->
+                <a
+                  href="https://192.168.43.232:3000/sai/controle"
+                  @click=" open = !open"
+                  class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
+                  :class="{'bg-primary-100 dark:bg-primary': isActive || open}"
+                  role="button"
+                  aria-haspopup="true"
+                  :aria-expanded="(open || isActive) ? 'true' : 'false'"
+                >
+                  <span aria-hidden="true">
+                    <svg
+                      class="w-5 h-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                  </span>
+                  <span class="ml-2 text-sm"> Contrôler </span>
+                  
+                </a>
+                
+              </div>
+              <div x-data="{ isActive: false, open: false }">
+                <!-- active classes 'bg-primary-100 dark:bg-primary' -->
+                <a
+                  href="#"
+                  @click=" open = !open"
+                  class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
+                  :class="{ 'bg-primary-100 dark:bg-primary': isActive || open }"
+                  role="button"
+                  aria-haspopup="true"
+                  :aria-expanded="(open || isActive) ? 'true' : 'false'"
+                >
+                  <span aria-hidden="true">
+                    <svg
+                      class="w-5 h-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </span>
+                  <span class="ml-2 text-sm"> Exporter </span>
+                  
+                </a>
+              </div>
+            </nav>
+
+            <div >
+              <img   src="../images/imgactionneur.png" alt="user-header">
+             </div>
+          </div>
+        </aside>
+
+        <div class="flex-1 h-full overflow-x-hidden overflow-y-auto">
+          <!-- Navbar -->
+          <header class="relative bg-white dark:bg-darker">
+            <div class="flex items-center justify-between p-2 border-b dark:border-primary-darker">
+              <!-- Mobile menu button -->
+              <button
+                @click="isMobileMainMenuOpen = !isMobileMainMenuOpen"
+                class="p-1 transition-colors duration-200 rounded-md text-primary-lighter bg-primary-50 hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark md:hidden focus:outline-none focus:ring"
+              >
+                <span class="sr-only">Open main manu</span>
+                <span aria-hidden="true">
+                  <svg
+                    class="w-8 h-8"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </span>
+              </button>
+
+              <!-- Brand -->
+              <div class="image-section1">
+                <img  class="img-fluid rounded-image" src="../images/logo3.png" alt="logo">
+               </div>
+              <a
+                href="#"
+                class="inline-block text-2xl font-bold tracking-wider uppercase text-primary-dark dark:text-light"
+              >
+                SAI - ACTIONNEURS
+              </a>
+
+             
+
+              <!-- Desktop Right buttons -->
+              <nav aria-label="Secondary" class="hidden space-x-2 md:flex md:items-center">
+               
+                <!-- Notification button -->
+                <button
+                  @click="openNotificationsPanel"
+                  class="p-2 transition-colors duration-200 rounded-full text-primary-lighter bg-primary-50 hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark focus:outline-none focus:bg-primary-100 dark:focus:bg-primary-dark focus:ring-primary-darker"
+                >
+                  <span class="sr-only">Open Notification panel</span>
+                  <svg
+                    class="w-7 h-7"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                    />
+                  </svg>
+                </button>
+                <div class="col-span-1 bg-white rounded-md dark:bg-darker" x-data="{ isOn: true }">
+               
+                  <div class="flex  justify-between p-1  dark:border-primary">
+                   
+                    <div class="flex items-center space-x-1">
+                      <button
+                        class="relative focus:outline-none"
+                        x-cloak
+                        @click="isOn = !isOn; location.href='https://192.168.43.232:3000/sai/acces';"
+                      >
+                        <div
+                          class="w-12 h-6 rounded-full outline-none bg-primary-100 dark:bg-primary-darker"
+                        ></div>
+                        <div
+                          class="absolute top-0 left-0 inline-flex items-center justify-center w-6 h-6 transition-all duration-200 ease-in-out transform scale-110 rounded-full shadow-sm"
+                          :class="{ 'translate-x-1  bg-white dark:bg-primary-100': !isOn, 'translate-x-6 bg-primary-light dark:bg-primary': isOn }"
+                        ></div>
+                      </button>
+                    </div>
+                  </div>
+                  
+                </div>
+
+              </nav>
+
+              <!-- Mobile sub menu -->
+              <nav
+                x-transition:enter="transition duration-200 ease-in-out transform sm:duration-500"
+                x-transition:enter-start="-translate-y-full opacity-0"
+                x-transition:enter-end="translate-y-0 opacity-100"
+                x-transition:leave="transition duration-300 ease-in-out transform sm:duration-500"
+                x-transition:leave-start="translate-y-0 opacity-100"
+                x-transition:leave-end="-translate-y-full opacity-0"
+                x-show="isMobileSubMenuOpen"
+                @click.away="isMobileSubMenuOpen = false"
+                class="absolute flex items-center p-4 bg-white rounded-md shadow-lg dark:bg-darker top-16 inset-x-4 md:hidden"
+                aria-label="Secondary"
+              >
+                <div class="space-x-2">
+                
+                  <!-- Notification button -->
+                  <button
+                    @click="openNotificationsPanel(); $nextTick(() => { isMobileSubMenuOpen = false })"
+                    class="p-2 transition-colors duration-200 rounded-full text-primary-lighter bg-primary-50 hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark focus:outline-none focus:bg-primary-100 dark:focus:bg-primary-dark focus:ring-primary-darker"
+                  >
+                    <span class="sr-only">Open notifications panel</span>
+                    <svg
+                      class="w-7 h-7"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </nav>
+            </div>
+            <!-- Mobile main manu -->
+            
+          </header>
+
+          <!-- Main content -->
+          <main>
+            <!-- Content header -->
+             
+            <div class="flex items-center justify-between p-4  rounded-md dark:bg-darker">
+              <span class=" col-md text-xl font-semibold text-center font-bold" >Actionneurs Sur Site</span>
+              <button  type="button" class="btn btn-warning rounded-md waves-effect m-r-30 focus:outline-none focus:ring-2 
+              focus:outline-none focus:ring-2 focus:ring-primary " onclick="actShowForm()">Ajouter actionneur</button>
+              
+            </div>
+
+
+  
+            <div class="act-divider"></div>
+            <div class="flex items-center justify-between p-4 bg-white rounded-md dark:bg-darker header-row">
+                <div>
+                    <span  class=" col-md  font-semibold text-center ">Total <span id="act-total-actionneurs" class="act-total-actionneurs">0</span> Entrée (s)</span>
+                </div>
+                <div>
+                    <label class=" col-md  font-semibold text-center " for="act-search-input">Recherche </label>
+                    <input type="text" id="act-search-input" class="act-search-input" placeholder="Rechercher un actionneur" oninput="actSearchActionneur(event)">
+                </div>
+            </div>
+            <div class="act-divider"></div>
+            <table class=" justify-between p-4 bg-white dark:bg-darker" id="act-actionneur-table">
+                <thead>
+                    <tr>
+                        <th>ID_Bloc_Actionneur</th>
+                        <th>Nom et Modèle</th>
+                        <th>État</th>
+                        <th>Culture</th>
+                        <th>ID_Proppriétaire</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Les lignes du tableau seront ajoutées ici -->
+                </tbody>
+            </table>
+            <div class="act-divider"></div>
+            <div class="act-last-update col-md  font-semibold text-center" id="act-last-update">Mise à jour : </div>
+            <div class="divider"></div>
+
+
+              <div id="act-notification" class="act-notification">Aucun Bloc d'Actionneur ne correspond à l'ID renseigné</div>
+
+              <div id="act-dialog-overlay" class="act-dialog-overlay">
+                <div class="act-dialog-box">
+                    <p class=" col-md font-semibold text-center font-bold">Voulez-vous supprimer la ligne ?</p>
+                    <button class="btn btn-warning rounded-md waves-effect waves-light text-uppercase m-r-30 focus:outline-none focus:ring-2 focus:ring-primary
+                    focus:outline-none focus:ring-2 focus:ring-primary" onclick="actConfirmDelete(true)">Oui</button>
+                    <button class="btn btn-warning rounded-md waves-effect waves-light text-uppercase m-r-30 focus:outline-none focus:ring-2 focus:ring-primary
+                    focus:outline-none focus:ring-2 focus:ring-primary" onclick="actConfirmDelete(false)">Non</button>
+                </div>
+              </div>
+
+              <div id="act-form-container" class="act-form-container">
+                <div class="act-form-box">
+                  <img src="../images/logo3.png" alt="Logo">
+                  <h3 class=" col-md text-xl font-semibold text-center font-bold">INFORMATIONS SUR LE BLOC DE CAPTEURS</h3>
+                    <input type="text" id="act-actionneur-id" placeholder="ID_Bloc_Actionneur">
+                    <input type="text" id="act-actionneur-name" placeholder="Nom et Modèle">
+                    <input type="text" id="act-actionneur-state" placeholder="État">
+                    <input type="text" id="act-actionneur-culture" placeholder="Culture">
+                    <input type="text" id="act-actionneur-ipr" placeholder="ID_Proppriétaire">
+                    <div class="act-form-buttons">
+                        <button class="btn btn-warning rounded-md waves-effect m-r-30 focus:outline-none focus:ring-2 
+                        focus:outline-none focus:ring-2 focus:ring-primary " id="act-form-submit-btn" onclick="actAddOrUpdateActionneur()">Ajouter</button>
+                        <button class="btn btn-warning rounded-md waves-effect m-r-30 focus:outline-none focus:ring-2 
+                        focus:outline-none focus:ring-2 focus:ring-primary " onclick="actHideForm()">Annuler</button>
+                    </div>
+                </div>
+              </div>
+               
+          </main>
+
+          <!-- Main footer -->
+            <!-- Content -->
+            <div class="mt-5">
+              <!-- State cards -->
+              <div class="  gap-8 p-4  ">
+                <!-- Value card -->
+                
+              
+              </div>
+           
+            </div>
+             <!-- Content -->
+             <div class="mt-5">
+              <!-- State cards -->
+              <div class="  gap-8 p-4  ">
+                <!-- Value card -->
+                
+              
+              </div>
+           
+            </div>
+             <!-- Content -->
+             <div class="mt-5">
+              <!-- State cards -->
+              <div class="  gap-8 p-4  ">
+                <!-- Value card -->
+                
+              
+              </div>
+           
+            </div>
+            <div class="mt-5">
+              <!-- State cards -->
+              <div class="  gap-8 p-4  ">
+                <!-- Value card -->
+                
+              
+              </div>
+           
+            </div>
+            <div class="mt-5">
+              <!-- State cards -->
+              <div class="  gap-8 p-4  ">
+                <!-- Value card -->
+                
+              
+              </div>
+           
+            </div>
+            <div class="mt-5">
+              <!-- State cards -->
+              <div class="  gap-8 p-4  ">
+                <!-- Value card -->
+                
+              
+              </div>
+           
+            </div>
+             <!-- Content -->
+             <div class="mt-5">
+              <!-- State cards -->
+              <div class="  gap-8 p-4  ">
+                <!-- Value card -->
+                
+              
+              </div>
+           
+            </div>
+             <!-- Content -->
+             <div class="mt-5">
+              <!-- State cards -->
+              <div class="  gap-8 p-4  ">
+                <!-- Value card -->
+                
+              
+              </div>
+           
+            </div>
+             <!-- Content -->
+             <div class="mt-5">
+              <!-- State cards -->
+              <div class="  gap-8 p-4  ">
+                <!-- Value card -->
+                
+              
+              </div>
+           
+            </div>
+           
+        
+          <footer
+            class="flex items-center justify-between p-1 bg-white border-t dark:bg-darker dark:border-primary-darker"
+          >
+            <div class=" col-md text-xl font-semibold text-center font-bold">SAI &copy; 2024</div>
+            <div class=" col-md text-xl font-semibold text-center font-bold">
+              IoT - Blockchain Irrigation
+            
+            </div>
+          </footer>
+        </div>
+
+        
+
+       
+        
+
+        <!-- Notification panel -->
+        <!-- Backdrop -->
+        <div
+          x-transition:enter="transition duration-300 ease-in-out"
+          x-transition:enter-start="opacity-0"
+          x-transition:enter-end="opacity-100"
+          x-transition:leave="transition duration-300 ease-in-out"
+          x-transition:leave-start="opacity-100"
+          x-transition:leave-end="opacity-0"
+          x-show="isNotificationsPanelOpen"
+          @click="isNotificationsPanelOpen = false"
+          class="fixed inset-0 z-10 bg-primary-darker"
+          style="opacity: 0.5"
+          aria-hidden="true"
+        ></div>
+        <!-- Panel -->
+        <section
+          x-transition:enter="transition duration-300 ease-in-out transform sm:duration-500"
+          x-transition:enter-start="-translate-x-full"
+          x-transition:enter-end="translate-x-0"
+          x-transition:leave="transition duration-300 ease-in-out transform sm:duration-500"
+          x-transition:leave-start="translate-x-0"
+          x-transition:leave-end="-translate-x-full"
+          x-ref="notificationsPanel"
+          x-show="isNotificationsPanelOpen"
+          @keydown.escape="isNotificationsPanelOpen = false"
+          tabindex="-1"
+          aria-labelledby="notificationPanelLabel"
+          class="fixed inset-y-0 z-20 w-full max-w-xs bg-white dark:bg-darker dark:text-light sm:max-w-md focus:outline-none"
+        >
+          <div class="absolute right-0 p-2 transform translate-x-full">
+            <!-- Close button -->
+            <button
+              @click="isNotificationsPanelOpen = false"
+              class="p-2 text-white rounded-md focus:outline-none focus:ring"
+            >
+              <svg
+                class="w-5 h-5"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div class="flex flex-col h-screen" x-data="{ activeTabe: 'action' }">
+            <!-- Panel header -->
+            <div class="flex-shrink-0">
+              <div class="flex items-center justify-between px-4 pt-4 border-b dark:border-primary-darker">
+                <h2 id="notificationPanelLabel" class="pb-4 font-semibold">Notifications</h2>
+                <div class="space-x-2">
+                  <button
+                    @click.prevent="activeTabe = 'action'"
+                    class="px-px pb-4 transition-all duration-200 transform translate-y-px border-b focus:outline-none"
+                    :class="{'border-primary-dark dark:border-primary': activeTabe == 'action', 'border-transparent': activeTabe != 'action'}"
+                  >
+                    Evènements
+                  </button>
+                 
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel content (tabs) -->
+            <div class="flex-1 pt-4 overflow-y-hidden hover:overflow-y-auto">
+              <!-- Action tab -->
+              <div class="space-y-4" x-show.transition.in="activeTabe == 'action'">
+                <a href="#" class="block">
+                  <div class="flex px-4 space-x-4">
+                    <div class="relative flex-shrink-0">
+                      <span
+                        class="z-10 inline-block p-2 overflow-visible rounded-full bg-primary-50 text-primary-light dark:bg-primary-darker"
+                      >
+                        <svg
+                          class="w-7 h-7"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                          />
+                        </svg>
+                      </span>
+                      <div class="absolute h-24 p-px -mt-3 -ml-px bg-primary-50 left-1/2 dark:bg-primary-darker"></div>
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                      <h5 class="text-sm font-semibold text-gray-600 dark:text-light">
+                        New project "KWD Dashboard" created
+                      </h5>
+                      <p class="text-sm font-normal text-gray-400 truncate dark:text-primary-lighter">
+                        Looks like there might be a new theme soon
+                      </p>
+                      <span class="text-sm font-normal text-gray-400 dark:text-primary-light"> 9h ago </span>
+                    </div>
+                  </div>
+                </a>
+                <a href="#" class="block">
+                  <div class="flex px-4 space-x-4">
+                    <div class="relative flex-shrink-0">
+                      <span
+                        class="inline-block p-2 overflow-visible rounded-full bg-primary-50 text-primary-light dark:bg-primary-darker"
+                      >
+                        <svg
+                          class="w-7 h-7"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                          />
+                        </svg>
+                      </span>
+                      <div class="absolute h-24 p-px -mt-3 -ml-px bg-primary-50 left-1/2 dark:bg-primary-darker"></div>
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                      <h5 class="text-sm font-semibold text-gray-600 dark:text-light">
+                        KWD Dashboard v0.0.2 was released
+                      </h5>
+                      <p class="text-sm font-normal text-gray-400 truncate dark:text-primary-lighter">
+                        Successful new version was released
+                      </p>
+                      <span class="text-sm font-normal text-gray-400 dark:text-primary-light"> 2d ago </span>
+                    </div>
+                  </div>
+                </a>
+                <a href="#" class="block">
+                  <div class="flex px-4 space-x-4">
+                    <div class="relative flex-shrink-0">
+                      <span
+                        class="inline-block p-2 overflow-visible rounded-full bg-primary-50 text-primary-light dark:bg-primary-darker"
+                      >
+                        <svg
+                          class="w-7 h-7"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                          />
+                        </svg>
+                      </span>
+                      <div class="absolute h-24 p-px -mt-3 -ml-px bg-primary-50 left-1/2 dark:bg-primary-darker"></div>
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                      <h5 class="text-sm font-semibold text-gray-600 dark:text-light">
+                        KWD Dashboard v0.0.2 was released
+                      </h5>
+                      <p class="text-sm font-normal text-gray-400 truncate dark:text-primary-lighter">
+                        Successful new version was released
+                      </p>
+                      <span class="text-sm font-normal text-gray-400 dark:text-primary-light"> 2d ago </span>
+                    </div>
+                  </div>
+                </a>
+               
+              </div>
+
+              
+            </div>
+          </div>
+        </section>
+
+       
+      </div>
+    </div>
+
+   
+    <script>
+      const setup = () => {
+        const getTheme = () => {
+          if (window.localStorage.getItem('dark')) {
+            return JSON.parse(window.localStorage.getItem('dark'))
+          }
+
+          return !!window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        }
+
+        const setTheme = (value) => {
+          window.localStorage.setItem('dark', value)
+        }
+
+        const getColor = () => {
+          if (window.localStorage.getItem('color')) {
+            return window.localStorage.getItem('color')
+          }
+          return 'cyan'
+        }
+
+        const setColors = (color) => {
+          const root = document.documentElement
+          root.style.setProperty('--color-primary', `var(--color-green)`)
+          root.style.setProperty('--color-primary-50', `var(--color-green-50)`)
+          root.style.setProperty('--color-primary-100', `var(--color-green-100)`)
+          root.style.setProperty('--color-primary-light', `var(--color-green-light)`)
+          root.style.setProperty('--color-primary-lighter', `var(--color-green-lighter)`)
+          root.style.setProperty('--color-primary-dark', `var(--color-green-dark)`)
+          root.style.setProperty('--color-primary-darker', `var(--color-green-darker)`)
+          this.selectedColor = color
+          window.localStorage.setItem('color', color)
+          //
+        }
+
+        const updateBarChart = (on) => {
+          const data = {
+            data: randomData(),
+            backgroundColor: 'rgb(207, 250, 254)',
+          }
+          if (on) {
+            barChart.data.datasets.push(data)
+            barChart.update()
+          } else {
+            barChart.data.datasets.splice(1)
+            barChart.update()
+          }
+        }
+
+        const updateDoughnutChart = (on) => {
+          const data = random()
+          const color = 'rgb(207, 250, 254)'
+          if (on) {
+            doughnutChart.data.labels.unshift('Seb')
+            doughnutChart.data.datasets[0].data.unshift(data)
+            doughnutChart.data.datasets[0].backgroundColor.unshift(color)
+            doughnutChart.update()
+          } else {
+            doughnutChart.data.labels.splice(0, 1)
+            doughnutChart.data.datasets[0].data.splice(0, 1)
+            doughnutChart.data.datasets[0].backgroundColor.splice(0, 1)
+            doughnutChart.update()
+          }
+        }
+
+        const updateLineChart = () => {
+          lineChart.data.datasets[0].data.reverse()
+          lineChart.update()
+        }
+
+        return {
+          loading: true,
+          isDark: getTheme(),
+          toggleTheme() {
+            this.isDark = !this.isDark
+            setTheme(this.isDark)
+          },
+          setLightTheme() {
+            this.isDark = false
+            setTheme(this.isDark)
+          },
+          setDarkTheme() {
+            this.isDark = true
+            setTheme(this.isDark)
+          },
+          color: getColor(),
+          selectedColor: 'cyan',
+          setColors,
+          toggleSidbarMenu() {
+            this.isSidebarOpen = !this.isSidebarOpen
+          },
+          isSettingsPanelOpen: false,
+          openSettingsPanel() {
+            this.isSettingsPanelOpen = true
+            this.$nextTick(() => {
+              this.$refs.settingsPanel.focus()
+            })
+          },
+          isNotificationsPanelOpen: false,
+          openNotificationsPanel() {
+            this.isNotificationsPanelOpen = true
+            this.$nextTick(() => {
+              this.$refs.notificationsPanel.focus()
+            })
+          },
+          isSearchPanelOpen: false,
+          openSearchPanel() {
+            this.isSearchPanelOpen = true
+            this.$nextTick(() => {
+              this.$refs.searchInput.focus()
+            })
+          },
+          isMobileSubMenuOpen: false,
+          openMobileSubMenu() {
+            this.isMobileSubMenuOpen = true
+            this.$nextTick(() => {
+              this.$refs.mobileSubMenu.focus()
+            })
+          },
+          isMobileMainMenuOpen: false,
+          openMobileMainMenu() {
+            this.isMobileMainMenuOpen = true
+            this.$nextTick(() => {
+              this.$refs.mobileMainMenu.focus()
+            })
+          },
+          updateBarChart,
+          updateDoughnutChart,
+          updateLineChart,
+        }
+      }
+    
+     
+
+        
+        let actActionneurCount = 0;
+    let actRowToDelete = null;
+    let actRowToEdit = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        actLoadTableData();
+    });
+
+    function actShowForm() {
+        document.getElementById('act-form-container').style.display = 'flex';
+    }
+
+    function actHideForm() {
+        document.getElementById('act-form-container').style.display = 'none';
+        actClearForm();
+    }
+
+    function actAddOrUpdateActionneur() {
+        const id = document.getElementById('act-actionneur-id').value.toString();
+        const name = document.getElementById('act-actionneur-name').value.toString();
+        const state = document.getElementById('act-actionneur-state').value.toString();
+        const culture = document.getElementById('act-actionneur-culture').value.toString();
+        const ipr = document.getElementById('act-actionneur-ipr').value.toString();
+
+        if (id && name && state && culture && ipr) {
+            if (actRowToEdit) {
+                const rowIndex = actRowToEdit.rowIndex;
+                actRowToEdit.remove();
+                actRowToEdit = null;
+                actAddActionneur(id, name, state, culture, ipr, rowIndex);
+                document.getElementById('act-form-submit-btn').textContent = 'Ajouter';
+            } else {
+                actAddActionneur(id, name, state, culture, ipr);
+            }
+
+            actHideForm();
+        } else {
+            alert('Veuillez remplir tous les champs correctement.');
+        }
+    }
+
+    function actAddActionneur(id, name, state, culture, ipr, rowIndex = -1) {
+        const table = document.getElementById('act-actionneur-table').getElementsByTagName('tbody')[0];
+        const row = (rowIndex >= 0) ? table.insertRow(rowIndex) : table.insertRow();
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        const cell3 = row.insertCell(2);
+        const cell4 = row.insertCell(3);
+        const cell5 = row.insertCell(4);
+        const cell6 = row.insertCell(5);
+
+        cell1.textContent = id;
+        cell2.textContent = name;
+        cell3.textContent = state;
+        cell4.textContent = culture;
+        cell5.textContent = ipr;
+        cell6.innerHTML = '<div class="act-action-buttons"><button  class="btn btn-warning rounded-md waves-effect m-r-30 focus:outline-none focus:ring-2 focus:outline-none focus:ring-2 focus:ring-primary" onclick="actEditRow(this)">Modifier</button><button  class="btn btn-warning rounded-md waves-effect m-r-30 focus:outline-none focus:ring-2 focus:outline-none focus:ring-2 focus:ring-primary " onclick="actDeleteRow(this)">Supprimer</button></div>';
+
+        if (rowIndex < 0) {
+            actActionneurCount++;
+            document.getElementById('act-total-actionneurs').textContent = actActionneurCount;
+        }
+
+        actUpdateLastUpdate();
+        actSaveDataToLocalStorage();
+    }
+
+    function actEditRow(button) {
+        const row = button.parentElement.parentElement.parentElement;
+        actRowToEdit = row;
+        const cells = row.getElementsByTagName('td');
+        const id = cells[0].textContent;
+        const name = cells[1].textContent;
+        const state = cells[2].textContent;
+        const culture = cells[3].textContent;
+        const ipr = cells[4].textContent;
+
+        document.getElementById('act-actionneur-id').value = id;
+        document.getElementById('act-actionneur-name').value = name;
+        document.getElementById('act-actionneur-state').value = state;
+        document.getElementById('act-actionneur-culture').value = culture;
+        document.getElementById('act-actionneur-ipr').value = ipr;
+        document.getElementById('act-form-submit-btn').textContent = 'Modifier';
+        actShowForm();
+    }
+
+    function actDeleteRow(button) {
+        actRowToDelete = button.parentElement.parentElement.parentElement;
+        document.getElementById('act-dialog-overlay').style.display = 'flex';
+    }
+
+    function actConfirmDelete(confirm) {
+        if (confirm) {
+            actRowToDelete.remove();
+            actActionneurCount--;
+            document.getElementById('act-total-actionneurs').textContent = actActionneurCount;
+            actUpdateLastUpdate();
+
+            actSaveDataToLocalStorage();
+        }
+        actRowToDelete = null;
+        document.getElementById('act-dialog-overlay').style.display = 'none';
+    }
+
+    function actSearchActionneur(event) {
+        const filter = event.target.value.toLowerCase();
+        const rows = document.getElementById('act-actionneur-table').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+        for (const row of rows) {
+            const id = row.cells[0].textContent.toLowerCase();
+            const name = row.cells[1].textContent.toLowerCase();
+            const state = row.cells[2].textContent.toLowerCase();
+            const culture = row.cells[3].textContent.toLowerCase();
+            const ipr = row.cells[4].textContent.toLowerCase();
+
+            if (id.includes(filter) || name.includes(filter) || state.includes(filter) || culture.includes(filter) || ipr.includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    }
+
+    function actUpdateLastUpdate() {
+        const now = new Date();
+        const formattedDate = now.toLocaleString('fr-FR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        document.getElementById('act-last-update').textContent = 'Mise à jour : ' + formattedDate;
+    }
+
+    function actClearForm() {
+        document.getElementById('act-actionneur-id').value = '';
+        document.getElementById('act-actionneur-name').value = '';
+        document.getElementById('act-actionneur-state').value = '';
+        document.getElementById('act-actionneur-culture').value = '';
+        document.getElementById('act-actionneur-ipr').value = '';
+    }
+
+    function actLoadTableData() {
+        const storedData = localStorage.getItem('act-actionneurs-data');
+        if (storedData) {
+            const actionneurs = JSON.parse(storedData);
+            actionneurs.forEach(data => {
+                actAddActionneur(data.id, data.name, data.state, data.culture, data.ipr);
+            });
+        } else {
+            // Charger les données initiales (si nécessaire) depuis une source de données.
+            // Ceci est une fonction d'exemple et devrait être modifiée pour charger les données réelles.
+            const exampleData = [
+                {
+                    id: '001',
+                    name: 'Actionneur A1',
+                    state: 'État1',
+                    culture: 'Culture1',
+                    ipr: 'IPR1'
+                },
+                {
+                    id: '002',
+                    name: 'Actionneur A2',
+                    state: 'État2',
+                    culture: 'Culture2',
+                    ipr: 'IPR2'
+                }
+            ];
+
+            exampleData.forEach(data => {
+                actAddActionneur(data.id, data.name, data.state, data.culture, data.ipr);
+            });
+        }
+    }
+
+    function actSaveDataToLocalStorage() {
+        const table = document.getElementById('act-actionneur-table').getElementsByTagName('tbody')[0];
+        const rows = table.getElementsByTagName('tr');
+        const actionneurs = [];
+
+        for (const row of rows) {
+            const cells = row.getElementsByTagName('td');
+            const id = cells[0].textContent;
+            const name = cells[1].textContent;
+            const state = cells[2].textContent;
+            const culture = cells[3].textContent;
+            const ipr = cells[4].textContent;
+
+            actionneurs.push({ id, name, state, culture, ipr });
+        }
+
+        localStorage.setItem('act-actionneurs-data', JSON.stringify(actionneurs));
+    }
+    
+  </script>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+
+
+volumes:
+  orderer2.sia.com:
+  orderer3.sia.com:
+
+
+networks:
+  byfn:
+
+services:
+
+  orderer2.sia.com:
+    extends:
+      file: base/peer-base.yaml
+      service: orderer-base
+    environment:
+      - ORDERER_GENERAL_LISTENPORT=8050
+    container_name: orderer2.sia.com
+    networks:
+      - byfn
+    volumes:
+      - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - ./crypto-config/ordererOrganizations/sia.com/orderers/orderer2.sia.com/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/sia.com/orderers/orderer2.sia.com/tls/:/var/hyperledger/orderer/tls
+      - orderer2.sia.com:/var/hyperledger/production/orderer
+    ports:
+      - 8050:8050
+
+  orderer3.sia.com:
+    extends:
+      file: base/peer-base.yaml
+      service: orderer-base
+    environment:
+      - ORDERER_GENERAL_LISTENPORT=9050
+    container_name: orderer3.sia.com
+    networks:
+      - byfn
+    volumes:
+      - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - ./crypto-config/ordererOrganizations/sia.com/orderers/orderer3.sia.com/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/sia.com/orderers/orderer3.sia.com/tls/:/var/hyperledger/orderer/tls
+      - orderer3.sia.com:/var/hyperledger/production/orderer
+    ports:
+      - 9050:9050
+
+  

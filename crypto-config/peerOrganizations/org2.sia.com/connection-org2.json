@@ -1,0 +1,48 @@
+{
+    "name": "fabric-irrigation-org2",
+    "version": "1.0.0",
+    "client": {
+        "organization": "Org2",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                }
+            }
+        }
+    },
+    "organizations": {
+        "Org2": {
+            "mspid": "Org2MSP",
+            "peers": [
+                "peer0.org2.sia.com"
+            ],
+            "certificateAuthorities": [
+                "ca.org2.sia.com"
+            ]
+        }
+    },
+    "peers": {
+        "peer0.org2.sia.com": {
+            "url": "grpcs://localhost:9051",
+            "tlsCACerts": {
+                "path": "crypto-config/peerOrganizations/org2.sia.com/tlsca/tlsca.org2.sia.com-cert.pem"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.org2.sia.com"
+            }
+        }
+    },
+    "certificateAuthorities": {
+        "ca.org2.sia.com": {
+            "url": "https://localhost:8054",
+            "caName": "ca-org2",
+            "tlsCACerts": {
+                "path": "crypto-config/peerOrganizations/org2.sia.com/tlsca/tlsca.org2.sia.com-cert.pem"
+            },
+            "httpOptions": {
+                "verify": false
+            }
+        }
+    }
+}

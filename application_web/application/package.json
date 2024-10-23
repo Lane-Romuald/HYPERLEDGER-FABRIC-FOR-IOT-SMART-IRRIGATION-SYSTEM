@@ -1,0 +1,30 @@
+{
+    "name": "application_web",
+    "version": "1.0.0",
+    "description": "Transfert d'aticf dans SAI",
+    "main": "sai.js",
+    "engines": {
+        "node": ">=14.14",
+        "npm": ">=6"
+    },
+    "scripts": {
+        "lint": "eslint *.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "engineStrict": true,
+    "author": "Hyperledger",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "@grpc/grpc-js": "^1.10.1",
+        "axios": "^1.7.2",
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "fabric-ca-client": "^2.2.19",
+        "fabric-network": "^2.2.19",
+        "python-shell": "^5.0.0"
+    },
+    "devDependencies": {
+        "eslint": "^7.32.0",
+        "nodemon": "^3.1.0"
+    }
+}

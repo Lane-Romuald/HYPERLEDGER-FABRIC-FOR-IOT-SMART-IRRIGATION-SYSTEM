@@ -1,0 +1,9 @@
+# Extensions à ajouter à une demande de certificat
+basicConstraints = CA:FALSE 
+authorityKeyIdentifier = keyid:toujours, issuer:toujours 
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment, dataEncipherment 
+subjectAltName = @alt_names
+[ alt_names ] 
+DNS.1 = localhost
+IP.1=192.168.43.232
+
