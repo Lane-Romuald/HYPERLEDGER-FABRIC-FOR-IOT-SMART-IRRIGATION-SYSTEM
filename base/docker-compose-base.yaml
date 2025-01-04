@@ -1,0 +1,69 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+services:
+
+  orderer.sia.com:
+    container_name: orderer.sia.com
+    extends:
+      file: peer-base.yaml
+      service: orderer-base
+    volumes:
+        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../crypto-config/ordererOrganizations/sia.com/orderers/orderer.sia.com/msp:/var/hyperledger/orderer/msp
+        - ../crypto-config/ordererOrganizations/sia.com/orderers/orderer.sia.com/tls/:/var/hyperledger/orderer/tls
+        - orderer.sia.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  peer0.org1.sia.com:
+    container_name: peer0.org1.sia.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org1.sia.com
+      - CORE_PEER_ADDRESS=peer0.org1.sia.com:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.org1.sia.com:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org1.sia.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.sia.com:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/org1.sia.com/peers/peer0.org1.sia.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/org1.sia.com/peers/peer0.org1.sia.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.org1.sia.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+
+  peer0.org2.sia.com:
+    container_name: peer0.org2.sia.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org2.sia.com
+      - CORE_PEER_ADDRESS=peer0.org2.sia.com:9051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:9051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.org2.sia.com:9052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.sia.com:9051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org2.sia.com:9051
+      - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/org2.sia.com/peers/peer0.org2.sia.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/org2.sia.com/peers/peer0.org2.sia.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.org2.sia.com:/var/hyperledger/production
+    ports:
+      - 9051:9051
+
+  
